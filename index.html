@@ -18,6 +18,7 @@
     .strip { height:6px; background:linear-gradient(to right, red, yellow, red); margin:20px 0; }
     .field { margin-bottom:8px; }
     .price { margin-top:15px; font-size:18px; font-weight:bold; color:#b60000; }
+    .download-btn { text-align:center; margin-top:20px; }
   </style>
 </head>
 <body>
@@ -53,6 +54,7 @@
       </optgroup>
     </select>
   </label>
+
   <label>Destino:
     <select id="destino" required>
       <optgroup label="Islas Canarias">
@@ -81,10 +83,13 @@
       </optgroup>
     </select>
   </label>
+
   <label>Fecha de ida: <input type="datetime-local" id="fecha" required></label>
   <label id="vueltaLabel" style="display:none;">Fecha de vuelta: <input type="datetime-local" id="fechaVuelta"></label>
+
   <label>Adultos: <input type="number" id="adultos" min="1" value="1" required></label>
   <label>Niños: <input type="number" id="ninos" min="0" value="0"></label>
+
   <label>Familia numerosa:
     <select id="familia">
       <option value="ninguna">Ninguna</option>
@@ -92,12 +97,14 @@
       <option value="especial">Especial (–10%)</option>
     </select>
   </label>
+
   <label>Tipo de viaje:
     <select id="tipoViaje" onchange="toggleVuelta()">
       <option value="ida">Solo ida</option>
       <option value="ida_vuelta">Ida y vuelta</option>
     </select>
   </label>
+
   <label>Clase:
     <select id="clase">
       <option value="economy">Economy</option>
@@ -105,12 +112,17 @@
       <option value="first">First Class</option>
     </select>
   </label>
+
   <label>Otros detalles:<textarea id="otros" rows="2"></textarea></label>
   <button type="submit">Calcular y generar</button>
 </form>
 
 <div id="pasajeContainer"></div>
+<div class="download-btn" style="display:none">
+  <button onclick="descargarPDF()">Descargar PDF</button>
+</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
   function toggleVuelta() {
     const tipo = document.getElementById("tipoViaje").value;
@@ -200,8 +212,21 @@
     }
 
     document.getElementById("pasajeContainer").innerHTML = html;
+    document.querySelector(".download-btn").style.display = "block";
     window.scrollTo(0,document.body.scrollHeight);
   });
+
+  function descargarPDF() {
+    const element = document.getElementById("pasajeContainer");
+    const opt = {
+      margin:       0.5,
+      filename:     'Tarjeta_Embarque_Eurofly.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
 </script>
 
 </body>
